@@ -1,13 +1,14 @@
 USE employeeTracker_DB;
 
 /* Insert  Rows into department table */
+
 INSERT INTO department (name)
 VALUES ("Engineer");
 
 INSERT INTO department (name)
 VALUES ("Sales");
 
-INSERT INO department (name)
+INSERT INTO department (name)
 VALUES ("Finance");
 
 INSERT INTO department (name)
@@ -53,7 +54,7 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Sumo", "Saarika", 6, NULL);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Rini", "Daari", 7, 5);
+VALUES ("Rini", "Daari", 1, 5);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Janan", "Shenba", 8, 5);
+VALUES ("Janan", "Shenba", 4, 6);
