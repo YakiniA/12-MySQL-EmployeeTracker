@@ -102,9 +102,95 @@ connection = mysql.createConnection({
             console.log(res.length + " matches found!");
         
             console.table(res);
+            inquirerPrompts();
          });
        
        }
 
+    function addEmployee() {
+         const role =  returnRole();
+         const manager =  returnManager();
+         var choiceArray = [];
+         var choiceArray2 = [];
+         connection.query("SELECT * from role", function(err, role) {
+         
+          for (var i = 0; i < role.length; i++) {
+            choiceArray.push(role[i].title);
+            console.log(choiceArray);
+          }
+
+         });
+
+         connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee", function(err, manager) {
+         
+          for (var i = 0; i < manager.length; i++) {
+            choiceArray2.push(manager[i].managerName);
+            console.log(choiceArray2);
+          }
+
+         });
+       console.log(choiceArray);
+       console.log(choiceArray2);
+        inquirer
+        .prompt([
+          {
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first Name?"
+          },
+          {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last Name?"
+          },
+          {
+          name: "choice",
+          type: "rawlist",
+          choices: [...choiceArray]
+          
+          },
+
+          {
+            name: "choice",
+            type: "rawlist",
+            choices: [...choiceArray2]
+          }
+        ])
+    .then(function(answer) {
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO auctions SET ?",
+        {
+          item_name: answer.item,
+          category: answer.category,
+          starting_bid: answer.startingBid || 0,
+          highest_bid: answer.startingBid || 0
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Your auction was created successfully!");
+          // re-prompt the user for if they want to bid or post
+          start();
+        }
+      );
+    });
+
+       
+       }
+
+
+     function returnRole(){
+    
+      connection.query("SELECT * from role", function(err, role) {
+         return role;
+       })
+       }
+ 
+       function returnManager(){
+        connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as manager from employee", function(err , manager) { 
+          return manager;
+       })
+
+       }
 
        inquirerPrompts();
