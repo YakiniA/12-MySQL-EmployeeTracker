@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var consoleTable = require("console.table")
 
 let connection;
 connection = mysql.createConnection({
@@ -92,19 +93,18 @@ connection = mysql.createConnection({
     function viewAllEmployees() {
         console.log("View All Employees...\n");
    
-        var query = connection.query(
-          "SELECT employee.first_name, employee.last_name, role.title,  department.name, role.salary, INSERT INTO items SET ?",
-          {
-            item: answers.bidItem,
-            price: answers.bidPrice,
-            highestBid : answers.bidPrice
+        var query = "SELECT e.id , e.first_name, e.last_name, r.title,  d.name as department, r.salary, CONCAT(m.first_name,' ',m.last_name) as manager from employee e " ;
+          query += "LEFT JOIN role r ON e.role_id = r.id ";
+          query += "LEFT JOIN department d ON r.department_id = d.id " ;
+          query += "LEFT JOIN employee m ON m.id = e.manager_id"
         
-          },
-          function(err, res) {
-            if (err) throw err;
-            console.log(res.affectedRows + " product inserted!\n");
-            // Call updateProduct AFTER the INSERT completes
-          }
-        );
-        console.log(query.sql);
-    }
+          connection.query(query, function(err, res) {
+            console.log(res.length + " matches found!");
+        
+            console.table(res);
+         });
+       
+       }
+
+
+       inquirerPrompts();
