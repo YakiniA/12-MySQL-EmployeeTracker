@@ -156,10 +156,10 @@ connection = mysql.createConnection({
         ])
     .then(function(answer) {
       // when finished prompting, insert a new item into the db with that info
-        var deptId =  deptID(answer.role);
-        var managerId =  managerID(answer.managerName);
-        console.log(typeof deptId);
-        console.log(typeof managerId);
+        var deptId = deptID(answer.role);
+        var managerId = managerID(answer.managerName);
+        console.log(deptId);
+        console.log(managerId);
 
         "INSERT INTO employee SET ?",
         {
@@ -200,12 +200,12 @@ connection = mysql.createConnection({
          var deptId = "";
         var query = "SELECT department_id from role where role.title = ?"
         connection.query(query, deptName, function(err, resdeptId) {
-          console.log(resdeptId);
+          
           deptId = resdeptId;
-           return resdeptId;
+           
         });
         return deptId;
-        console.log("My DEpt id" +deptId);
+       
       }
 
 
@@ -213,9 +213,9 @@ connection = mysql.createConnection({
         var managerId = "";
         var query = "SELECT employee.id from employee where CONCAT(employee.first_name,' ',employee.last_name) = ?"
         connection.query(query, managerName , function(err , resManager){
-          console.log(resManager);
+       
           managerId = resManager;
-          return resManager;
+        
         })
         return managerId;
       }
