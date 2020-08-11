@@ -108,29 +108,27 @@ connection = mysql.createConnection({
        }
 
     function addEmployee() {
-         const role =  returnRole();
-         const manager =  returnManager();
-         var choiceArray = [];
-         var choiceArray2 = [];
+        //  const role =  returnRole();
+        //  const manager =  returnManager();
+         var rolechoiceArray = [];
+         var managerchoiceArray = [];
+
          connection.query("SELECT * from role", function(err, role) {
          
           for (var i = 0; i < role.length; i++) {
-            choiceArray.push(role[i].title);
-            console.log(choiceArray);
+            rolechoiceArray.push(role[i].title);
+           
           }
 
-         });
+      
 
          connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee", function(err, manager) {
          
           for (var i = 0; i < manager.length; i++) {
-            choiceArray2.push(manager[i].managerName);
-            console.log(choiceArray2);
+            managerchoiceArray.push(manager[i].managerName);
+           
           }
 
-         });
-       console.log(choiceArray);
-       console.log(choiceArray2);
         inquirer
         .prompt([
           {
@@ -144,53 +142,81 @@ connection = mysql.createConnection({
             message: "What is the employee's last Name?"
           },
           {
-          name: "choice",
+          name: "role",
           type: "rawlist",
-          choices: [...choiceArray]
+          choices: rolechoiceArray
           
           },
 
           {
-            name: "choice",
+            name: "managerName",
             type: "rawlist",
-            choices: [...choiceArray2]
+            choices: managerchoiceArray
           }
         ])
     .then(function(answer) {
       // when finished prompting, insert a new item into the db with that info
-      connection.query(
-        "INSERT INTO auctions SET ?",
+        var deptId =  deptID(answer.role);
+        var managerId =  managerID(answer.managerName);
+        console.log(typeof deptId);
+        console.log(typeof managerId);
+
+        "INSERT INTO employee SET ?",
         {
-          item_name: answer.item,
-          category: answer.category,
-          starting_bid: answer.startingBid || 0,
-          highest_bid: answer.startingBid || 0
+          first_name: answer.firstName,
+          last_name: answer.lastName,
+          role_id: deptId,
+          manager_id: managerId
         },
+
         function(err) {
           if (err) throw err;
-          console.log("Your auction was created successfully!");
+          console.log("Your employee data got inserted successfully!");
           // re-prompt the user for if they want to bid or post
-          start();
+          inquirerPrompts();
         }
-      );
     });
+    });
+  });
+}
 
-       
-       }
 
-
-     function returnRole(){
+    //  function returnRole(){
     
-      connection.query("SELECT * from role", function(err, role) {
-         return role;
-       })
-       }
+    //   connection.query("SELECT * from role", function(err, role) {
+    //      return role;
+    //    })
+    //    }
  
-       function returnManager(){
-        connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as manager from employee", function(err , manager) { 
-          return manager;
-       })
+    //    function returnManager(){
+    //     connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as manager from employee", function(err , manager) { 
+    //       return manager;
+    //    })
 
-       }
+    //    }
 
+
+       function deptID(deptName){
+         var deptId = "";
+        var query = "SELECT department_id from role where role.title = ?"
+        connection.query(query, deptName, function(err, resdeptId) {
+          console.log(resdeptId);
+          deptId = resdeptId;
+           return resdeptId;
+        });
+        return deptId;
+        console.log("My DEpt id" +deptId);
+      }
+
+
+      function managerID(managerName){
+        var managerId = "";
+        var query = "SELECT employee.id from employee where CONCAT(employee.first_name,' ',employee.last_name) = ?"
+        connection.query(query, managerName , function(err , resManager){
+          console.log(resManager);
+          managerId = resManager;
+          return resManager;
+        })
+        return managerId;
+      }
        inquirerPrompts();
