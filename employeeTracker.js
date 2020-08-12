@@ -14,7 +14,7 @@ connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "webDev@2020",
   database: "employeeTracker_DB"
 });
 
@@ -153,19 +153,19 @@ function addEmployee() {
             type: "rawlist",
             choices: managerchoiceArray
           }
-        ]).then(async function (answer) {
+        ]).then(function (answer) {
 
           // when finished prompting, insert a new item into the db with that info
 
           connection.query("SELECT * from role where role.title = '" + answer.role + "'", function (err, resdeptId) {
-            var deptId;
+            var roleId;
             if (err) throw err;
 
             resdeptId.find(depId => {
-              deptId = depId.department_id
+              roleId = depId.id
             }
             );
-            console.log(deptId);
+            console.log(roleId);
 
             var managerName = answer.managerName;
             var firstName = managerName.split(" ", 1) + "%";
@@ -181,7 +181,7 @@ function addEmployee() {
                 {
                   first_name: answer.firstName,
                   last_name: answer.lastName,
-                  role_id: deptId,
+                  role_id: roleId,
                   manager_id: managerId
                 },
 
@@ -200,6 +200,100 @@ function addEmployee() {
         });
     });
   });
+}
+
+function updateEmployeeRole(){
+ 
+  var allEmployees = [];
+  var rolechoiceArray =[];
+  // connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+    connection.query("SELECT CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee", function(err, employee){
+      if (err) throw err;
+   
+     for (var i = 0; i < employee.length; i++) {
+      allEmployees.push(employee[i].managerName);
+
+    }
+
+  
+  connection.query("SELECT * from role", function (err, role) {
+
+    for (var i = 0; i < role.length; i++) {
+      rolechoiceArray.push(role[i].title);
+
+    }
+  
+   inquirer
+        .prompt([
+          {
+            name: "employee",
+            type: "rawlist",
+            message: "For which employee, role should be updated?",
+            choices: allEmployees
+          },
+          {
+            name: "employeeRole",
+            type: "rawlist",
+            message: "Please select the role for the selected employee...",
+            choices: rolechoiceArray
+          },
+         
+        ]).then(function (answer) {
+
+
+          connection.query("SELECT * from role where role.title = '" + answer.employeeRole + "'", function (err, resdeptId) {
+            var roleId;
+            if (err) throw err;
+
+            resdeptId.find(depId => {
+              roleId = depId.id
+            }
+            );
+            console.log(roleId);
+
+            var managerName = answer.employee;
+            var firstName = managerName.split(" ", 1) + "%";
+
+          // when finished prompting, insert a new item into the db with that info
+         var query =  connection.query("UPDATE employee SET role_id = '"+roleId+"' WHERE first_name LIKE '"+firstName+"'");
+      
+          if (err) throw err;
+
+          console.log("Employee role data got updated successfully!");
+          // re-prompt the user for if they want to bid or post
+          inquirerPrompts();
+        
+        });
+      });
+
+
+      });
+});
+}
+   
+ function retrieveAllEmployees(){
+
+  var result="";
+  // connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+   connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee", function (err, manager) {
+   if (err) throw err;
+    result = manager;
+    // console.log(result);
+   });
+   return result;
+   console.log(result);
+}
+
+  function retrieveAllEmployees1(){
+
+  var result="";
+  // connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+    connection.query("SELECT CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee", function(err, employee){
+      if (err) throw err;
+     result = employee;
+    });
+    return result;
+    
 }
 
 function deptID(deptName) {
@@ -222,4 +316,5 @@ function managerID(managerName) {
   var query = "SELECT employee.id from employee where CONCAT(employee.first_name,' ',employee.last_name) = ?"
   return connection.query(query, managerName)
 }
+
 inquirerPrompts();
