@@ -109,7 +109,7 @@ function viewAllEmployees() {
 
 }
 
-  function addEmployee() {
+function addEmployee() {
   //  const role =  returnRole();
   //  const manager =  returnManager();
   var rolechoiceArray = [];
@@ -129,7 +129,7 @@ function viewAllEmployees() {
 
       }
 
-       inquirer
+      inquirer
         .prompt([
           {
             name: "firstName",
@@ -153,60 +153,60 @@ function viewAllEmployees() {
             type: "rawlist",
             choices: managerchoiceArray
           }
-        ]).then(async function(answer) {
+        ]).then(async function (answer) {
 
-      // when finished prompting, insert a new item into the db with that info
- 
-       connection.query("SELECT * from role where role.title = '" +answer.role +"'", function(err, resdeptId) {
-         var deptId;
-          if (err) throw err;
+          // when finished prompting, insert a new item into the db with that info
 
-          resdeptId.find(depId => {
-          deptId = depId.department_id
-          }
-        );
-          console.log(deptId);
-          
-          var managerName = answer.managerName;
-          var firstName = managerName.split(" ",1)+"%";
-       connection.query("SELECT * from employee where employee.first_name LIKE '" +firstName+"'", function(err , resmanagerId){
-          if (err) throw err;
-         var managerId;
-         resmanagerId.find(mgrId =>{
-          managerId = mgrId.id
-         })
-      console.log(managerId);
-      
-      var query = connection.query("INSERT INTO employee SET ?",
-      {
-        first_name: answer.firstName,
-        last_name: answer.lastName,
-        role_id: deptId,
-        manager_id: managerId
-      },
+          connection.query("SELECT * from role where role.title = '" + answer.role + "'", function (err, resdeptId) {
+            var deptId;
+            if (err) throw err;
 
-   
-        function (err) {
-          if (err) throw err;
-        
-          console.log("Your employee data got inserted successfully!");
-          // re-prompt the user for if they want to bid or post
-          inquirerPrompts();
-        }
-      );
-    // );
-     });
+            resdeptId.find(depId => {
+              deptId = depId.department_id
+            }
+            );
+            console.log(deptId);
+
+            var managerName = answer.managerName;
+            var firstName = managerName.split(" ", 1) + "%";
+            connection.query("SELECT * from employee where employee.first_name LIKE '" + firstName + "'", function (err, resmanagerId) {
+              if (err) throw err;
+              var managerId;
+              resmanagerId.find(mgrId => {
+                managerId = mgrId.id
+              })
+              console.log(managerId);
+
+              var query = connection.query("INSERT INTO employee SET ?",
+                {
+                  first_name: answer.firstName,
+                  last_name: answer.lastName,
+                  role_id: deptId,
+                  manager_id: managerId
+                },
+
+
+                function (err) {
+                  if (err) throw err;
+
+                  console.log("Your employee data got inserted successfully!");
+                  // re-prompt the user for if they want to bid or post
+                  inquirerPrompts();
+                }
+              );
+              // );
+            });
+          });
+        });
     });
-    });
-});
-});
+  });
 }
 
- function deptID(deptName) {
+function deptID(deptName) {
 
 
-  var result= "";
-  connection.query("SELECT department_id from role where role.title = '" +deptName +"'", function(err, res) {
+  var result = "";
+  connection.query("SELECT department_id from role where role.title = '" + deptName + "'", function (err, res) {
     if (err) throw err;
     result = res;
     console.log(result);
@@ -216,10 +216,10 @@ function viewAllEmployees() {
 }
 
 
- function managerID(managerName) {
+function managerID(managerName) {
   // connection.query = util.promisify(connection.query);
   var managerId = "";
   var query = "SELECT employee.id from employee where CONCAT(employee.first_name,' ',employee.last_name) = ?"
-  return  connection.query(query, managerName)
+  return connection.query(query, managerName)
 }
 inquirerPrompts();
