@@ -62,7 +62,7 @@ function inquirerPrompts() {
 
           break;
 
-        case `RemoveEmployee`:
+        case `Remove Employee`:
 
           removeEmployee();
 
@@ -181,12 +181,64 @@ async function addEmployee() {
                 function (err) {
                   if (err) throw err;
 
-                  console.log("Your employee data got inserted successfully!");
+                  console.log("======  Your employee data got inserted successfully!  ======");
                   inquirerPrompts();
                 }
               );
           }); 
 }
+
+async function removeEmployee() {
+ 
+    var choiceArray = [];
+
+    var employee = await retrieveAllEmployees();
+
+     for (var i = 0; i < employee.length; i++) {
+      choiceArray.push(employee[i].id + " Employee Name: "+employee[i].managerName);
+    }
+
+      inquirer
+        .prompt([
+      
+          {
+            name: "employee",
+            type: "rawlist",
+            message: "Which employee you want to remove?",
+            choices: choiceArray
+          }
+        ]).then(async function (answer) {
+          
+          // console.log(answer);
+          console.log(answer.employee.ID);
+          console.log(answer.employee);
+
+          var getId = answer.employee;
+          var id = getId.split(" ", 1) 
+          console.log(JSON.parse(id));
+          // connection.query(
+          //   "DELETE FROM products WHERE ?",
+          //   {
+          //     flavor: "strawberry"
+          //   },
+          //   function(err, res) {
+          //     if (err) throw err;
+
+           connection.query(
+             "DELETE FROM employee WHERE ?",
+              {
+                id : id
+              },
+
+             function (err) {
+             if (err) throw err;
+ 
+            console.log("======  Removed Employee's data successfully!  ====== ");
+            inquirerPrompts();
+
+        });
+      });
+    }
 
 async function updateEmployeeRole(){
  
@@ -237,7 +289,7 @@ async function updateEmployeeRole(){
          function (err) {
           if (err) throw err;
 
-          console.log("Employee's role got updated successfully!");
+          console.log("======  Employee's role got updated successfully!  ======");
           inquirerPrompts();
          });
         });
@@ -298,7 +350,7 @@ async function updateEmployeeManager(){
                 if (err) throw err;
               });
           }
-          console.log("Employee's manager details got updated successfully!");
+          console.log("======  Employee's manager details got updated successfully!======  ");
            inquirerPrompts();
         
          });
@@ -313,7 +365,7 @@ async function updateEmployeeManager(){
  async function retrieveAllEmployees(){
   
   connection.query = util.promisify(connection.query);
-  return await connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+  return await connection.query("SELECT  id, CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
    
 }
 
