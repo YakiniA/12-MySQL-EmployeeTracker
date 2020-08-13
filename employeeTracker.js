@@ -259,7 +259,7 @@ function updateEmployeeRole(){
       
           if (err) throw err;
 
-          console.log("Employee role data got updated successfully!");
+          console.log("Employee's role got updated successfully!");
           // re-prompt the user for if they want to bid or post
           inquirerPrompts();
         
@@ -271,6 +271,87 @@ function updateEmployeeRole(){
 });
 }
    
+
+function updateEmployeeManager(){
+ 
+  var allEmployees = [];
+  var rolechoiceArray =[];
+  // connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+    connection.query("SELECT CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee", function(err, employee){
+      if (err) throw err;
+   
+     for (var i = 0; i < employee.length; i++) {
+      allEmployees.push(employee[i].managerName);
+
+    }
+
+  
+  connection.query("SELECT * from role", function (err, role) {
+
+    for (var i = 0; i < role.length; i++) {
+      rolechoiceArray.push(role[i].title);
+
+    }
+  
+   inquirer
+        .prompt([
+          {
+            name: "employee",
+            type: "rawlist",
+            message: "For which employee, manager detail to be updated?",
+            choices: allEmployees
+          },
+          {
+            name: "manager",
+            type: "rawlist",
+            message: "Please select the manager for the selected employee...",
+            choices: allEmployees
+          },
+         
+        ]).then(function (answer) {
+
+
+          if(answer.employee === answer.manager){
+             console.log(`Employee and manager should not be same. Please select a different manager`);
+             updateEmployeeManager();
+          }
+
+          var empName = answer.employee;
+          var empfirstName = empName.split(" ", 1) + "%";
+          console.log("Emp FirstName" +empfirstName);
+          var mgrName = answer.manager;
+          var mgrfirstName = mgrName.split(" ", 1) + "%";
+          console.log("MGR FirstName" +mgrfirstName)
+           connection.query("SELECT * from employee where first_name LIKE '" +mgrfirstName+ "'", function (err, mgrDetails) {
+             var mgrId;
+             if (err) throw err;
+          console.log(mgrDetails);
+             mgrDetails.find(managerId => {
+              mgrId = managerId.id
+             }
+             );
+             console.log(mgrId);
+
+          
+
+            //when finished prompting, insert a new item into the db with that info
+           var query =  connection.query("UPDATE employee SET manager_id = '"+mgrId+"' WHERE first_name LIKE '"+empfirstName+"'");
+      
+            if (err) throw err;
+
+           console.log("Employee's manager details got updated successfully!");
+           // re-prompt the user for if they want to bid or post
+           inquirerPrompts();
+        
+         });
+      });
+
+
+      });
+
+});
+}
+
  function retrieveAllEmployees(){
 
   var result="";
