@@ -168,8 +168,11 @@ async function addEmployee() {
 
             var managerName = answer.managerName;
             var firstName = managerName.split(" ", 1) + "%";
-            connection.query("SELECT * from employee where employee.first_name LIKE '" + firstName + "'", function (err, resmanagerId) {
-              if (err) throw err;
+
+            var resmanagerId = await retrieveEmployeeBasedOnName(firstName);
+            // connection.query("SELECT * from employee where employee.first_name LIKE '" + firstName + "'", function (err, resmanagerId) {
+            //   if (err) throw err;
+            console.log(resmanagerId);
               var managerId;
               resmanagerId.find(mgrId => {
                 managerId = mgrId.id
@@ -194,7 +197,7 @@ async function addEmployee() {
                 }
               );
               // );
-            });
+            // });
           });
         // });
   
@@ -294,7 +297,7 @@ async function updateEmployeeManager(){
             choices: allManager
           },
          
-        ]).then(function (answer) {
+        ]).then(async function (answer) {
 
 
           if(answer.employee === answer.manager){
@@ -308,9 +311,10 @@ async function updateEmployeeManager(){
           var mgrName = answer.manager;
           var mgrfirstName = mgrName.split(" ", 1) + "%";
           console.log("MGR FirstName" +mgrfirstName)
-           connection.query("SELECT * from employee where first_name LIKE '" +mgrfirstName+ "'", function (err, mgrDetails) {
+          //  connection.query("SELECT * from employee where first_name LIKE '" +mgrfirstName+ "'", function (err, mgrDetails) {
+             var mgrDetails = await retrieveEmployeeBasedOnName(mgrfirstName);
              var mgrId;
-             if (err) throw err;
+            //  if (err) throw err;
           console.log(mgrDetails);
              mgrDetails.find(managerId => {
               mgrId = managerId.id
@@ -335,7 +339,7 @@ async function updateEmployeeManager(){
            inquirerPrompts();
         
          });
-      });
+      // });
 }
 
  async function retrieveAllEmployees(){
@@ -357,25 +361,12 @@ async function retrieveRoleBasedOnTitle(role){
   return await connection.query("SELECT * from role where role.title = '" + role + "'");
 }
 
-function deptID(deptName) {
 
+async function retrieveEmployeeBasedOnName(name){
 
-  var result = "";
-  connection.query("SELECT department_id from role where role.title = '" + deptName + "'", function (err, res) {
-    if (err) throw err;
-    result = res;
-    console.log(result);
-  });
-  return result;
-
+  connection.query = util.promisify(connection.query);
+  return await connection.query("SELECT * from employee where employee.first_name LIKE '" + name + "'");
 }
 
-
-function managerID(managerName) {
-  // connection.query = util.promisify(connection.query);
-  var managerId = "";
-  var query = "SELECT employee.id from employee where CONCAT(employee.first_name,' ',employee.last_name) = ?"
-  return connection.query(query, managerName)
-}
 
 inquirerPrompts();
