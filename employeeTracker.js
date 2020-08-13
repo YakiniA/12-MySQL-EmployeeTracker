@@ -152,13 +152,13 @@ async function addEmployee() {
             type: "rawlist",
             choices: managerchoiceArray
           }
-        ]).then(function (answer) {
+        ]).then(async function (answer) {
 
           // when finished prompting, insert a new item into the db with that info
-
-          connection.query("SELECT * from role where role.title = '" + answer.role + "'", function (err, resdeptId) {
+         var resdeptId = await retrieveRoleBasedOnTitle(answer.role);
+          // connection.query("SELECT * from role where role.title = '" + answer.role + "'", function (err, resdeptId) {
             var roleId;
-            if (err) throw err;
+            // if (err) throw err;
 
             resdeptId.find(depId => {
               roleId = depId.id
@@ -196,7 +196,7 @@ async function addEmployee() {
               // );
             });
           });
-        });
+        // });
   
 }
 
@@ -233,12 +233,12 @@ async function updateEmployeeRole(){
             choices: rolechoiceArray
           },
          
-        ]).then(function (answer) {
-
-
-          connection.query("SELECT * from role where role.title = '" + answer.employeeRole + "'", function (err, resdeptId) {
-            var roleId;
-            if (err) throw err;
+        ]).then(async function (answer) {
+          var roleId;
+          var resdeptId = await retrieveRoleBasedOnTitle(answer.employeeRole);
+          // connection.query("SELECT * from role where role.title = '" + answer.employeeRole + "'", function (err, resdeptId) {
+           
+            // if (err) throw err;
 
             resdeptId.find(depId => {
               roleId = depId.id
@@ -250,16 +250,16 @@ async function updateEmployeeRole(){
             var firstName = managerName.split(" ", 1) + "%";
 
           // when finished prompting, insert a new item into the db with that info
-         var query =  connection.query("UPDATE employee SET role_id = '"+roleId+"' WHERE first_name LIKE '"+firstName+"'");
-      
+         var query =  connection.query("UPDATE employee SET role_id = '"+roleId+"' WHERE first_name LIKE '"+firstName+"'" ,
+         function (err) {
           if (err) throw err;
 
           console.log("Employee's role got updated successfully!");
           // re-prompt the user for if they want to bid or post
           inquirerPrompts();
-        
+         });
         });
-      });
+      // });
 
 
       // });
@@ -342,6 +342,12 @@ async function retrieveAllRoles(){
 
   connection.query = util.promisify(connection.query);
   return await connection.query("SELECT * from role");
+}
+
+async function retrieveRoleBasedOnTitle(role){
+
+  connection.query = util.promisify(connection.query);
+  return await connection.query("SELECT * from role where role.title = '" + role + "'");
 }
 
 function deptID(deptName) {
