@@ -208,6 +208,7 @@ async function updateEmployeeRole(){
   var role = await retrieveAllRoles();
   console.log("All Employees");
   console.log(employee);
+  console.log(role);
  
      for (var i = 0; i < employee.length; i++) {
       allEmployees.push(employee[i].managerName);
@@ -270,11 +271,12 @@ async function updateEmployeeRole(){
 async function updateEmployeeManager(){
  
   var allEmployees = [];
-  
+  var allManager = ["None"];
     var employee = await retrieveAllEmployees();
-    
+    // allManager.push("None");
     for (var i = 0; i < employee.length; i++) {
       allEmployees.push(employee[i].managerName);
+      allManager.push(employee[i].managerName);
     }
 
    inquirer
@@ -289,7 +291,7 @@ async function updateEmployeeManager(){
             name: "manager",
             type: "rawlist",
             message: "Please select the manager for the selected employee...",
-            choices: allEmployees
+            choices: allManager
           },
          
         ]).then(function (answer) {
@@ -316,10 +318,15 @@ async function updateEmployeeManager(){
              );
              console.log(mgrId);
 
-          
+          if(mgrId === undefined){
+             
+              var query =  connection.query("UPDATE employee SET manager_id = NULL WHERE first_name LIKE '"+empfirstName+"'");
+          }else{
+              var query =  connection.query("UPDATE employee SET manager_id = '"+mgrId+"' WHERE first_name LIKE '"+empfirstName+"'");
+          }
 
             //when finished prompting, insert a new item into the db with that info
-           var query =  connection.query("UPDATE employee SET manager_id = '"+mgrId+"' WHERE first_name LIKE '"+empfirstName+"'");
+          //  var query =  connection.query("UPDATE employee SET manager_id = '"+mgrId+"' WHERE first_name LIKE '"+empfirstName+"'");
       
             if (err) throw err;
 
