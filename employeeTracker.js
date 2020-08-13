@@ -202,20 +202,18 @@ function addEmployee() {
   });
 }
 
-function updateEmployeeRole(){
+async function updateEmployeeRole(){
  
   var allEmployees = [];
   var rolechoiceArray =[];
-  // connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
-    connection.query("SELECT CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee", function(err, employee){
-      if (err) throw err;
-   
+  var employee = await retrieveAllEmployees();
+  console.log("All Employees");
+  console.log(employee);
+ 
      for (var i = 0; i < employee.length; i++) {
       allEmployees.push(employee[i].managerName);
-
     }
 
-  
   connection.query("SELECT * from role", function (err, role) {
 
     for (var i = 0; i < role.length; i++) {
@@ -267,7 +265,7 @@ function updateEmployeeRole(){
       });
 
 
-      });
+      // });
 });
 }
    
@@ -352,17 +350,12 @@ function updateEmployeeManager(){
 });
 }
 
- function retrieveAllEmployees(){
-
+ async function retrieveAllEmployees(){
+  var allEmployees = [];
   var result="";
-  // connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
-   connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee", function (err, manager) {
-   if (err) throw err;
-    result = manager;
-    // console.log(result);
-   });
-   return result;
-   console.log(result);
+  connection.query = util.promisify(connection.query);
+  return await connection.query("SELECT  CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+   
 }
 
   function retrieveAllEmployees1(){
