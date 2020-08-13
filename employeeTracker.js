@@ -119,13 +119,29 @@ function viewEmployeesByDept(){
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
-        console.log('======  View Employee By Department  ======');
+        console.log('======  View Employees By Department  ======');
         console.log('\n');
         console.table(res);
         inquirerPrompts();
     });
 }
 
+function viewEmployeesByManager(){
+  const query = `SELECT CONCAT(m.first_name, ' ', m.last_name) AS manager, d.name AS department, e.id, e.first_name, e.last_name, r.title
+                 FROM employee e
+                 LEFT JOIN employee m on m.id = e.manager_id
+                 INNER JOIN role r ON (r.id = e.role_id && e.manager_id != 'NULL')
+                 INNER JOIN department d ON (d.id = r.department_id)
+                 ORDER BY manager`;
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('======  View Employees By Manager  ======');
+        console.log('\n');
+        console.table(res);
+        inquirerPrompts();
+    });
+}
 async function addEmployee() {
 
   var rolechoiceArray = [];
