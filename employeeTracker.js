@@ -110,14 +110,12 @@ function viewAllEmployees() {
 }
 
 async function addEmployee() {
-  //  const role =  returnRole();
-  //  const manager =  returnManager();
+  
   var rolechoiceArray = [];
-  var managerchoiceArray = [];
+  var managerchoiceArray = ["None"];
 
     var role = await retrieveAllRoles();
     var employee = await retrieveAllEmployees();
-   
   
     for (var i = 0; i < role.length; i++) {
       rolechoiceArray.push(role[i].title);
@@ -133,12 +131,14 @@ async function addEmployee() {
           {
             name: "firstName",
             type: "input",
-            message: "What is the employee's first Name?"
+            message: "What is the employee's first Name?",
+            validate: inputValidation
           },
           {
             name: "lastName",
             type: "input",
-            message: "What is the employee's last Name?"
+            message: "What is the employee's last Name?",
+            validate: inputValidation
           },
           {
             name: "role",
@@ -154,53 +154,38 @@ async function addEmployee() {
           }
         ]).then(async function (answer) {
 
-          // when finished prompting, insert a new item into the db with that info
          var resdeptId = await retrieveRoleBasedOnTitle(answer.role);
-          // connection.query("SELECT * from role where role.title = '" + answer.role + "'", function (err, resdeptId) {
             var roleId;
-            // if (err) throw err;
+            var managerId;
 
             resdeptId.find(depId => {
               roleId = depId.id
-            }
-            );
-            console.log(roleId);
-
+            });
+        
             var managerName = answer.managerName;
             var firstName = managerName.split(" ", 1) + "%";
 
             var resmanagerId = await retrieveEmployeeBasedOnName(firstName);
-            // connection.query("SELECT * from employee where employee.first_name LIKE '" + firstName + "'", function (err, resmanagerId) {
-            //   if (err) throw err;
-            console.log(resmanagerId);
-              var managerId;
+          
               resmanagerId.find(mgrId => {
                 managerId = mgrId.id
               })
-              console.log(managerId);
-
-              var query = connection.query("INSERT INTO employee SET ?",
+            
+            connection.query("INSERT INTO employee SET ?",
                 {
                   first_name: answer.firstName,
                   last_name: answer.lastName,
                   role_id: roleId,
                   manager_id: managerId
                 },
-
-
                 function (err) {
                   if (err) throw err;
 
                   console.log("Your employee data got inserted successfully!");
-                  // re-prompt the user for if they want to bid or post
                   inquirerPrompts();
                 }
               );
-              // );
-            // });
-          });
-        // });
-  
+          }); 
 }
 
 async function updateEmployeeRole(){
@@ -240,34 +225,22 @@ async function updateEmployeeRole(){
         ]).then(async function (answer) {
           var roleId;
           var resdeptId = await retrieveRoleBasedOnTitle(answer.employeeRole);
-          // connection.query("SELECT * from role where role.title = '" + answer.employeeRole + "'", function (err, resdeptId) {
-           
-            // if (err) throw err;
-
             resdeptId.find(depId => {
               roleId = depId.id
             }
             );
-            console.log(roleId);
-
+          
             var managerName = answer.employee;
             var firstName = managerName.split(" ", 1) + "%";
-
-          // when finished prompting, insert a new item into the db with that info
-         var query =  connection.query("UPDATE employee SET role_id = '"+roleId+"' WHERE first_name LIKE '"+firstName+"'" ,
+        
+         connection.query("UPDATE employee SET role_id = '"+roleId+"' WHERE first_name LIKE '"+firstName+"'" ,
          function (err) {
           if (err) throw err;
 
           console.log("Employee's role got updated successfully!");
-          // re-prompt the user for if they want to bid or post
           inquirerPrompts();
          });
         });
-      // });
-
-
-      // });
-// });
 }
    
 
@@ -276,7 +249,6 @@ async function updateEmployeeManager(){
   var allEmployees = [];
   var allManager = ["None"];
     var employee = await retrieveAllEmployees();
-    // allManager.push("None");
     for (var i = 0; i < employee.length; i++) {
       allEmployees.push(employee[i].managerName);
       allManager.push(employee[i].managerName);
@@ -302,45 +274,41 @@ async function updateEmployeeManager(){
 
           if(answer.employee === answer.manager){
              console.log(`Employee and manager should not be same. Please select a different manager`);
-             updateEmployeeManager();
+             return updateEmployeeManager();
           }
-
           var empName = answer.employee;
-          var empfirstName = empName.split(" ", 1) + "%";
-          console.log("Emp FirstName" +empfirstName);
           var mgrName = answer.manager;
+          var empfirstName = empName.split(" ", 1) + "%";
           var mgrfirstName = mgrName.split(" ", 1) + "%";
-          console.log("MGR FirstName" +mgrfirstName)
-          //  connection.query("SELECT * from employee where first_name LIKE '" +mgrfirstName+ "'", function (err, mgrDetails) {
              var mgrDetails = await retrieveEmployeeBasedOnName(mgrfirstName);
              var mgrId;
-            //  if (err) throw err;
-          console.log(mgrDetails);
              mgrDetails.find(managerId => {
               mgrId = managerId.id
-             }
-             );
-             console.log(mgrId);
+             });
 
           if(mgrId === undefined){
              
-              var query =  connection.query("UPDATE employee SET manager_id = NULL WHERE first_name LIKE '"+empfirstName+"'");
+              var query =  connection.query("UPDATE employee SET manager_id = NULL WHERE first_name LIKE '"+empfirstName+"'",  
+              function (err) {
+                if (err) throw err;
+              });
           }else{
-              var query =  connection.query("UPDATE employee SET manager_id = '"+mgrId+"' WHERE first_name LIKE '"+empfirstName+"'");
+              var query =  connection.query("UPDATE employee SET manager_id = '"+mgrId+"' WHERE first_name LIKE '"+empfirstName+"'",
+              function (err) {
+                if (err) throw err;
+              });
           }
-
-            //when finished prompting, insert a new item into the db with that info
-          //  var query =  connection.query("UPDATE employee SET manager_id = '"+mgrId+"' WHERE first_name LIKE '"+empfirstName+"'");
-      
-            if (err) throw err;
-
-           console.log("Employee's manager details got updated successfully!");
-           // re-prompt the user for if they want to bid or post
+          console.log("Employee's manager details got updated successfully!");
            inquirerPrompts();
         
          });
-      // });
 }
+
+   // To validate whether questions are answered. If not, return 'Please enter the detail' message
+   function inputValidation(value){
+    if(value!="" && value.match('[a-zA-Z][a-zA-Z]+$'))return true;
+    else return `Please enter valid detail`;
+  }
 
  async function retrieveAllEmployees(){
   
