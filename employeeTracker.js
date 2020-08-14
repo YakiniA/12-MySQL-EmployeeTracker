@@ -14,7 +14,7 @@ connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "webDev@2020",
   database: "employeeTracker_DB"
 });
 
@@ -238,7 +238,9 @@ async function removeEmployee() {
   var employee = await retrieveAllEmployees();
 
   for (var i = 0; i < employee.length; i++) {
-    choiceArray.push(employee[i].id + " Employee Name: " + employee[i].managerName);
+    // choiceArray.push(employee[i].id + " Employee Name: " + employee[i].managerName);
+    choiceArray.push("ID: " + employee[i].id + " Employee Name: " + employee[i].managerName);
+
   }
 
   inquirer
@@ -246,19 +248,14 @@ async function removeEmployee() {
 
       {
         name: "employee",
-        type: "rawlist",
+        type: "list",
         message: "Which employee you want to remove?",
         choices: choiceArray
       }
     ]).then(async function (answer) {
 
-      // console.log(answer);
-      console.log(answer.employee.ID);
-      console.log(answer.employee);
-
-      var getId = answer.employee;
-      var id = getId.split(" ", 1)
-      console.log(JSON.parse(id));
+      var id = answer.employee.split(" ", 2)[1];
+       console.log(JSON.parse(id));
 
       connection.query(
         "DELETE FROM employee WHERE ?",
@@ -272,7 +269,6 @@ async function removeEmployee() {
           console.log("======  Removed Employee's data successfully!  ====== ");
           console.log('\n');
           inquirerPrompts();
-        
 
         });
     });
