@@ -238,7 +238,6 @@ async function removeEmployee() {
   var employee = await retrieveAllEmployees();
 
   for (var i = 0; i < employee.length; i++) {
-    // choiceArray.push(employee[i].id + " Employee Name: " + employee[i].managerName);
     choiceArray.push("ID: " + employee[i].id + " Employee Name: " + employee[i].managerName);
 
   }
@@ -285,7 +284,7 @@ async function updateEmployeeRole() {
   console.log(role);
 
   for (var i = 0; i < employee.length; i++) {
-    allEmployees.push(employee[i].managerName);
+    allEmployees.push("ID: " + employee[i].id + " Employee Name: " + employee[i].managerName);
   }
 
   for (var i = 0; i < role.length; i++) {
@@ -297,7 +296,7 @@ async function updateEmployeeRole() {
     .prompt([
       {
         name: "employee",
-        type: "rawlist",
+        type: "list",
         message: "For which employee, role should be updated?",
         choices: allEmployees
       },
@@ -315,12 +314,14 @@ async function updateEmployeeRole() {
         roleId = depId.id
       }
       );
+      
+      var id = answer.employee.split(" ", 2)[1];
+      console.log(JSON.parse(id));
 
-      var managerName = answer.employee;
-      var firstName = managerName.split(" ", 1) + "%";
+      connection.query("UPDATE employee SET role_id = '" + roleId + "' WHERE id = '" + id + "'",
 
-      connection.query("UPDATE employee SET role_id = '" + roleId + "' WHERE first_name LIKE '" + firstName + "'",
         function (err) {
+
           if (err) throw err;
           console.log('\n');
           console.log("======  Employee's role got updated successfully!  ======");
