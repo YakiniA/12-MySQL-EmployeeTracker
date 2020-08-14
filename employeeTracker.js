@@ -14,7 +14,7 @@ connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "webDev@2020",
+  password: "",
   database: "employeeTracker_DB"
 });
 
@@ -364,7 +364,9 @@ async function updateEmployeeManager() {
 
 
       if (answer.employee === answer.manager) {
-        console.log(`Employee and manager should not be same. Please select a different manager`);
+        console.log('\n');
+        console.log(`===== Employee and manager should not be same. Please select a different manager =====`);
+        console.log('\n');
         return updateEmployeeManager();
       }
       var empName = answer.employee;
