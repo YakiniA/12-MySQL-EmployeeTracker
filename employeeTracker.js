@@ -296,7 +296,7 @@ async function updateEmployeeRole() {
     .prompt([
       {
         name: "employee",
-        type: "list",
+        type: "rawlist",
         message: "For which employee, role should be updated?",
         choices: allEmployees
       },
@@ -314,7 +314,7 @@ async function updateEmployeeRole() {
         roleId = depId.id
       }
       );
-      
+
       var id = answer.employee.split(" ", 2)[1];
       console.log(JSON.parse(id));
 
@@ -338,7 +338,7 @@ async function updateEmployeeManager() {
   var allManager = ["None"];
   var employee = await retrieveAllEmployees();
   for (var i = 0; i < employee.length; i++) {
-    allEmployees.push(employee[i].managerName);
+    allEmployees.push("ID: " + employee[i].id + " Employee Name: " + employee[i].managerName);
     allManager.push(employee[i].managerName);
   }
 
@@ -366,10 +366,12 @@ async function updateEmployeeManager() {
         console.log('\n');
         return updateEmployeeManager();
       }
-      var empName = answer.employee;
       var mgrName = answer.manager;
-      var empfirstName = empName.split(" ", 1) + "%";
       var mgrfirstName = mgrName.split(" ", 1) + "%";
+
+      var id = answer.employee.split(" ", 2)[1];
+      console.log(JSON.parse(id));
+
       var mgrDetails = await retrieveEmployeeBasedOnName(mgrfirstName);
       var mgrId;
       mgrDetails.find(managerId => {
@@ -378,12 +380,12 @@ async function updateEmployeeManager() {
 
       if (mgrId === undefined) {
 
-        var query = connection.query("UPDATE employee SET manager_id = NULL WHERE first_name LIKE '" + empfirstName + "'",
+        var query = connection.query("UPDATE employee SET manager_id = NULL WHERE id = '" + id + "'",
           function (err) {
             if (err) throw err;
           });
       } else {
-        var query = connection.query("UPDATE employee SET manager_id = '" + mgrId + "' WHERE first_name LIKE '" + empfirstName + "'",
+        var query = connection.query("UPDATE employee SET manager_id = '" + mgrId + "' WHERE id = '" + id + "'",
           function (err) {
             if (err) throw err;
           });
@@ -400,6 +402,13 @@ async function updateEmployeeManager() {
 function inputValidation(value) {
   if (value != "" && value.match('[a-zA-Z][a-zA-Z]+$')) return true;
   else return `Please enter valid detail`;
+}
+
+async function retrieveAllEmployees() {
+
+  connection.query = util.promisify(connection.query);
+  return await connection.query("SELECT  id, CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+
 }
 
 async function retrieveAllEmployees() {
