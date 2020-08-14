@@ -21,6 +21,14 @@ connection = mysql.createConnection({
 
 
 function inquirerPrompts() {
+
+  console.log("==================================================");
+  console.log("==================================================");
+  console.log("~~~~~~~~~~~~~~~  EMPLOYEE TRACKER  ~~~~~~~~~~~~~~~");
+  console.log("==================================================");
+  console.log("==================================================");
+  console.log('\n');
+ 
   inquirer.prompt([
     {
       type: "list",
@@ -102,7 +110,7 @@ function viewAllEmployees() {
   connection.query(query,  (err, res) => {
     if (err) throw err;
     console.log('\n');
-    console.log('======  View All Employees  ======');
+    console.log('=============== View All Employees  ==============');
     console.log('\n');
     console.table(res);
     inquirerPrompts();
@@ -119,7 +127,7 @@ function viewEmployeesByDept(){
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
-        console.log('======  View Employees By Department  ======');
+        console.log('========== View Employees By Department  =========');
         console.log('\n');
         console.table(res);
         inquirerPrompts();
@@ -136,12 +144,13 @@ function viewEmployeesByManager(){
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
-        console.log('======  View Employees By Manager  ======');
+        console.log('===========  View Employees By Manager  ==========');
         console.log('\n');
         console.table(res);
         inquirerPrompts();
     });
 }
+
 async function addEmployee() {
 
   var rolechoiceArray = [];
@@ -213,8 +222,9 @@ async function addEmployee() {
         },
         function (err) {
           if (err) throw err;
-
+          console.log('\n');
           console.log("======  Your employee data got inserted successfully!  ======");
+          console.log('\n');
           inquirerPrompts();
         }
       );
@@ -258,9 +268,11 @@ async function removeEmployee() {
 
         function (err) {
           if (err) throw err;
-
+          console.log('\n');
           console.log("======  Removed Employee's data successfully!  ====== ");
+          console.log('\n');
           inquirerPrompts();
+        
 
         });
     });
@@ -314,8 +326,9 @@ async function updateEmployeeRole() {
       connection.query("UPDATE employee SET role_id = '" + roleId + "' WHERE first_name LIKE '" + firstName + "'",
         function (err) {
           if (err) throw err;
-
+          console.log('\n');
           console.log("======  Employee's role got updated successfully!  ======");
+          console.log('\n');
           inquirerPrompts();
         });
     });
@@ -376,7 +389,9 @@ async function updateEmployeeManager() {
             if (err) throw err;
           });
       }
+      console.log('\n');
       console.log("======  Employee's manager details got updated successfully!======  ");
+      console.log('\n');
       inquirerPrompts();
 
     });
@@ -404,14 +419,16 @@ async function retrieveAllRoles() {
 async function retrieveRoleBasedOnTitle(role) {
 
   connection.query = util.promisify(connection.query);
-  return await connection.query("SELECT * from role where role.title = '" + role + "'");
+  // return await connection.query("SELECT * from role where role.title = '" + role + "'");
+  return await connection.query("SELECT * from role where role.title = ?" , [role]);
+
 }
 
 
 async function retrieveEmployeeBasedOnName(name) {
 
   connection.query = util.promisify(connection.query);
-  return await connection.query("SELECT * from employee where employee.first_name LIKE '" + name + "'");
+  return await connection.query("SELECT * from employee where employee.first_name LIKE ?" , [name]);
 }
 
 
