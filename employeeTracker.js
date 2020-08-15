@@ -14,7 +14,7 @@ connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "webDev@2020",
   database: "employeeTracker_DB"
 });
 
@@ -222,8 +222,10 @@ function viewDepartmentBudget(){
     });
 }
 
+//Function to perform add Employee
 async function addEmployee() {
 
+  //Setting the array to prompt the user to select
   var rolechoiceArray = [];
   var managerchoiceArray = ["None"];
 
@@ -267,6 +269,7 @@ async function addEmployee() {
       }
     ]).then(async function (answer) {
 
+      //Retrieve Role Id from Role table based on 'role title'
       var resdeptId = await retrieveRoleBasedOnTitle(answer.role);
       var roleId;
       var managerId;
@@ -278,6 +281,7 @@ async function addEmployee() {
       var managerName = answer.managerName;
       var firstName = managerName.split(" ", 1) + "%";
 
+      //Retrieve manager id from employee based on name
       var resmanagerId = await retrieveEmployeeBasedOnName(firstName);
 
       resmanagerId.find(mgrId => {
@@ -302,7 +306,7 @@ async function addEmployee() {
     });
 }
 
-
+//Function to add department
 function addDepartment(){
 
   inquirer
@@ -331,9 +335,10 @@ function addDepartment(){
   }
 
 
-
+//Function to add Role
 async function addRole(){
 
+  //Setting the array to prompt the user to select
   var choiceArray = [];
 
   var department = await retrieveAllDepartment();
@@ -342,7 +347,6 @@ async function addRole(){
     choiceArray.push("ID: " + department[i].id + " Department Name: " + department[i].name);
 
   }
-console.log(choiceArray);
   inquirer
   .prompt([
     {
@@ -367,16 +371,13 @@ console.log(choiceArray);
     var deptId;
 
     var depName= answer.deptName.split(" ", 5)[4];
-    // console.log(depName);
-    
+   //Retrieve department id from department based on name
     const resdeptId = await retrieveDepartmentByName(depName);
-    console.log(resdeptId);
     resdeptId.find(depId => {
       deptId = depId.id
     }
     );
 
-      console.log(deptId);
       connection.query("INSERT INTO role SET ?",
       {
         title : answer.roleName,
@@ -395,15 +396,15 @@ console.log(choiceArray);
 
   }
 
+//Function to remove employee
 async function removeEmployee() {
 
+  //Setting the array to prompt the user to select
   var choiceArray = [];
-
   var employee = await retrieveAllEmployees();
 
   for (var i = 0; i < employee.length; i++) {
     choiceArray.push("ID: " + employee[i].id + " Employee Name: " + employee[i].managerName);
-
   }
 
   inquirer
@@ -418,8 +419,6 @@ async function removeEmployee() {
     ]).then(async function (answer) {
 
       var id = answer.employee.split(" ", 2)[1];
-       console.log(JSON.parse(id));
-
       connection.query(
         "DELETE FROM employee WHERE ?",
         {
@@ -437,8 +436,10 @@ async function removeEmployee() {
     });
 }
 
+//Function to remove department
 async function removeDepartment(){
- 
+
+  //Setting the array to prompt the user to select
   var choiceArray = [];
 
   var department = await retrieveAllDepartment();
@@ -460,8 +461,6 @@ async function removeDepartment(){
     ]).then(async function (answer) {
 
       var id = answer.employee.split(" ", 2)[1];
-      console.log(JSON.parse(id));
-
       connection.query("DELETE from department WHERE ?",
       {
         id : id
@@ -470,6 +469,7 @@ async function removeDepartment(){
       function (err, res) {
      
         if (err){
+          // Capture the err and tell the user that delete operation cannot be performed as this table is maaped to employee.
           if( err.errno === 1451) {
           console.log('\n');
           console.log("=====  There are employees associated with the department. DELETE THEM before trying to delete the department!!!  =====");
@@ -490,6 +490,7 @@ async function removeDepartment(){
   });
 }
 
+//Function to perform remove role
 async function removeRole(){
   
   var choiceArray = [];
@@ -513,8 +514,6 @@ async function removeRole(){
     ]).then(async function (answer) {
 
       var id = answer.employee.split(" ", 2)[1];
-      console.log(JSON.parse(id));
-
       connection.query("DELETE from role WHERE ?",
       {
         id : id
@@ -522,6 +521,7 @@ async function removeRole(){
       function (err, res) {
      
         if (err){
+          // Capture the err and tell the user that delete operation cannot be performed as this table is maaped to employee.
           if( err.errno === 1451) {
           console.log('\n');
           console.log("=====  There are employees associated with the department. DELETE THEM before trying to delete the role!!!  =====");
@@ -542,16 +542,14 @@ async function removeRole(){
 });
 }
 
+//Function to perform update employee Role
 async function updateEmployeeRole() {
 
   var allEmployees = [];
   var rolechoiceArray = [];
   var employee = await retrieveAllEmployees();
   var role = await retrieveAllRoles();
-  console.log("All Employees");
-  console.log(employee);
-  console.log(role);
-
+  
   for (var i = 0; i < employee.length; i++) {
     allEmployees.push("ID: " + employee[i].id + " Employee Name: " + employee[i].managerName);
   }
@@ -585,8 +583,7 @@ async function updateEmployeeRole() {
       );
 
       var id = answer.employee.split(" ", 2)[1];
-      console.log(JSON.parse(id));
-
+    
       connection.query("UPDATE employee SET role_id = '" + roleId + "' WHERE id = '" + id + "'",
 
         function (err) {
@@ -600,7 +597,7 @@ async function updateEmployeeRole() {
     });
 }
 
-
+//Function to perform update employee manager
 async function updateEmployeeManager() {
 
   var allEmployees = [];
@@ -639,8 +636,6 @@ async function updateEmployeeManager() {
       var mgrfirstName = mgrName.split(" ", 1) + "%";
 
       var id = answer.employee.split(" ", 2)[1];
-      console.log(JSON.parse(id));
-
       var mgrDetails = await retrieveEmployeeBasedOnName(mgrfirstName);
       var mgrId;
       mgrDetails.find(managerId => {
