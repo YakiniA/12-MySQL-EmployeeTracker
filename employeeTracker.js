@@ -40,6 +40,10 @@ function inquirerPrompts() {
         "View All Employees by Manager",
         "Add Employee",
         "Remove Employee",
+        "Add Department",
+        "Remove Department",
+        "Add Role",
+        "Remove Role",
         "Update Employee Role",
         "Update Employee Manager"
       ]
@@ -76,6 +80,30 @@ function inquirerPrompts() {
 
           break;
 
+        case `Add Department`:
+
+          addDepartment();
+
+          break;
+
+        case `Remove Department`:
+
+          removeDepartment();
+
+          break;
+
+        case `Add Role`:
+
+          addRole();
+
+          break;
+  
+        case `Remove Role`:
+
+          removeRole();
+
+          break;
+
         case `Update Employee Role`:
 
           updateEmployeeRole();
@@ -90,6 +118,7 @@ function inquirerPrompts() {
 
         default:
 
+          console.log("~~ We are here to hep you with our Employee Tracker..Thank You !!! ~~");
           break;
 
       }
@@ -231,6 +260,99 @@ async function addEmployee() {
     });
 }
 
+
+function addDepartment(){
+
+  inquirer
+    .prompt([
+      {
+        name: "deptName",
+        type: "input",
+        message: "Please enter the department name you wish to add...",
+        validate: inputValidation
+      },
+    ]).then(async function (answer) {
+      connection.query("INSERT INTO department SET ?",
+      {
+        name : answer.deptName
+      },
+      function (err) {
+        if (err) throw err;
+        console.log('\n');
+        console.log("======  Department got inserted successfully!  ======");
+        console.log('\n');
+        inquirerPrompts();
+      }
+      );
+  });
+
+  }
+
+
+
+async function addRole(){
+
+  var choiceArray = ["No"];
+
+  var department = await retrieveAllDepartment();
+
+  for (var i = 0; i < department.length; i++) {
+    choiceArray.push("ID: " + department[i].id + " Department Name: " + department[i].name);
+
+  }
+console.log(choiceArray);
+  inquirer
+  .prompt([
+    {
+      name: "roleName",
+      type: "input",
+      message: "Please enter the role you wish to add.  ",
+      validate: inputValidation
+    },
+    {
+      name: "roleSalary",
+      type: "input",
+      message: "Please enter the salary for the role.  ",
+      validate: numberValidation
+    },
+    {
+      name: "deptName",
+      type: "rawlist",
+      message: "Do you wish to link the role to department?",
+      choices: choiceArray
+    }
+  ]).then(async function (answer) {
+    var deptId;
+
+    var depName= answer.deptName.split(" ", 5)[4];
+    // console.log(depName);
+    
+    const resdeptId = await retrieveDepartmentByName(depName);
+    console.log(resdeptId);
+    resdeptId.find(depId => {
+      deptId = depId.id
+    }
+    );
+
+      console.log(deptId);
+      connection.query("INSERT INTO role SET ?",
+      {
+        title : answer.roleName,
+        salary: answer.roleSalary,
+        department_id: deptId
+      },
+      function (err) {
+        if (err) throw err;
+        console.log('\n');
+        console.log("======  Role got inserted successfully!  ======");
+        console.log('\n');
+        inquirerPrompts();
+      }
+      );
+  });
+
+  }
+
 async function removeEmployee() {
 
   var choiceArray = [];
@@ -247,7 +369,7 @@ async function removeEmployee() {
 
       {
         name: "employee",
-        type: "list",
+        type: "rawlist",
         message: "Which employee you want to remove?",
         choices: choiceArray
       }
@@ -271,6 +393,48 @@ async function removeEmployee() {
 
         });
     });
+}
+
+async function removeDepartment(){
+  console.log('\n');
+  console.log("=== Caution : The employee's will be unassigned and they won't have department if you remove ===");
+  console.log('\n');
+  var choiceArray = [];
+
+  var department = await retrieveAllDepartment();
+
+  for (var i = 0; i < department.length; i++) {
+    choiceArray.push("ID: " + department[i].id + " Department Name: " + department[i].name);
+
+  }
+console.log(choiceArray);
+  inquirer
+    .prompt([
+
+      {
+        name: "employee",
+        type: "rawlist",
+        message: "Which department you want to remove?",
+        choices: choiceArray
+      }
+    ]).then(async function (answer) {
+
+      var id = answer.employee.split(" ", 2)[1];
+      console.log(JSON.parse(id));
+
+      connection.query("DELETE from department WHERE ?",
+      {
+        id : id
+      },
+      function (err) {
+        if (err) throw err;
+        console.log('\n');
+        console.log("======  Department got removed successfully!  ======");
+        console.log('\n');
+        inquirerPrompts();
+      }
+      );
+  });
 }
 
 async function updateEmployeeRole() {
@@ -404,10 +568,10 @@ function inputValidation(value) {
   else return `Please enter valid detail`;
 }
 
-async function retrieveAllEmployees() {
-
-  connection.query = util.promisify(connection.query);
-  return await connection.query("SELECT  id, CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+function numberValidation(value){
+ 
+    if (value != "" && value.match(/^[1-9]\d*$/)) return true;
+    else return `Please enter valid detail`;
 
 }
 
@@ -415,6 +579,20 @@ async function retrieveAllEmployees() {
 
   connection.query = util.promisify(connection.query);
   return await connection.query("SELECT  id, CONCAT(employee.first_name,' ',employee.last_name) as managerName from employee");
+
+}
+
+async function retrieveAllDepartment() {
+
+  connection.query = util.promisify(connection.query);
+  return await connection.query("SELECT id, name from department");
+
+}
+
+async function retrieveDepartmentByName(name) {
+
+  connection.query = util.promisify(connection.query);
+  return await connection.query("SELECT * from department where name = ?" , [name]);
 
 }
 
