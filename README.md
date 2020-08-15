@@ -114,5 +114,5 @@ StackOverflow : [StackOverflow - Failed to open referenced table](https://stacko
 StackOverflow : [StackOverflow - Incompatible With Column Type](https://stackoverflow.com/questions/44153618/ora-02267-column-type-incompatible-with-referenced-column-type)<br/>
 StackOverflow : [To access to exact value of array after 'Split'](https://stackoverflow.com/questions/7390091/can-i-access-directly-to-the-second-value-of-an-array-after-split)<br/>
 StackOverflow : [Foreign Key Constraints on Update and delete](https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete)<br/>
-SQL Bolt : [SQL Bolt](https://sqlbolt.com/)
+SQL Bolt : [SQL Bolt](https://sqlbolt.com/)<br/>
 SQL : [SQL - Left Join](https://www.sqlservertutorial.net/sql-server-basics/sql-server-left-join/)<br/>
