@@ -292,7 +292,7 @@ function addDepartment(){
 
 async function addRole(){
 
-  var choiceArray = ["No"];
+  var choiceArray = [];
 
   var department = await retrieveAllDepartment();
 
@@ -318,7 +318,7 @@ console.log(choiceArray);
     {
       name: "deptName",
       type: "rawlist",
-      message: "Do you wish to link the role to department?",
+      message: "Please link the role to department?",
       choices: choiceArray
     }
   ]).then(async function (answer) {
@@ -407,7 +407,7 @@ async function removeDepartment(){
     choiceArray.push("ID: " + department[i].id + " Department Name: " + department[i].name);
 
   }
-console.log(choiceArray);
+
   inquirer
     .prompt([
 
