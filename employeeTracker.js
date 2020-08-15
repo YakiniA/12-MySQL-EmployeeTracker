@@ -37,6 +37,7 @@ function inquirerPrompts() {
         "View All Employees",
         "View All Employees by Department",
         "View All Employees by Manager",
+        "View By Roles",
         "View Department Budget",
         "Add Employee",
         "Add Department",
@@ -69,6 +70,12 @@ function inquirerPrompts() {
           viewEmployeesByManager();
 
           break;
+
+        case `View By Roles`:
+
+        viewByRoles();
+
+        break;
 
         case `View Department Budget`:
 
@@ -183,6 +190,19 @@ function viewEmployeesByManager(){
         if (err) throw err;
         console.log('\n');
         console.log('===========  View Employees By Manager  ==========');
+        console.log('\n');
+        console.table(res);
+        inquirerPrompts();
+    });
+}
+
+function viewByRoles(){
+  const query = `SELECT r.id as roleId,  r.title as roleName, r.salary, r.department_id as departmentId, d.name as departmentName 
+  FROM employee e LEFT JOIN role r on e.role_id = r.id LEFT JOIN department d on r.department_id = d.id GROUP BY r.id, r.title;`;
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('===========  View By Roles  ==========');
         console.log('\n');
         console.table(res);
         inquirerPrompts();

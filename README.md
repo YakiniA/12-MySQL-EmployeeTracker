@@ -32,7 +32,7 @@ npm start
 
 * console.table -  Used console.table to print MySQL rows to the console.
 
-## User Story
+### User Story
 
 ```
 As a business owner
@@ -40,7 +40,11 @@ I want to be able to view and manage the departments, roles, and employees in my
 So that I can organize and plan my business
 ```
 
-## Database 
+### Database 
+
+<p>
+<img src="Assets/schema.png" width="550" alt= "HomePage" height="500"/>
+</p>
 
 * **department**:
 
@@ -77,16 +81,16 @@ The below functionalities are implemented:
 ### Application
 
 * This application is used for managing the company's employees with the help of node,inquirer and mySql.
-* This application can perform a variety of CRUD operations like Create, Read, Update and Delete on employee,role and department table data depending upon the inputs from the user using inquirer.
+* The application can perform a variety of operations like Select, Insert, Update and Delete on employee, role and department table depending upon the inputs from the user using inquirer.
 * The validation for the inputs is done on whether the inquirer prompt is being answered correctly or not.
 * Depending on the inputs, mysql query is written and connection is being established to the database by using mysql NPM module.
-* It also prompt the user with recent employee details and role for performing operations like add Employee , add Role, update Employee role, update employee manager etc.,
+* It also prompt the user with recent employee details and role for performing operations like add Employee, add Role, update Employee role, update employee manager etc.,
 
 ### Challenges Faced
 
 * The initial challenge in writing the mysql query using JOINTS is resolved with the help of my instructor, TA.
 * Always faced promise issue while trying to implement in async way. First, I tried to split up the queries into separate functions to use in my main function, while doing that it is not waiting for my sql operation to complete resulting in NULL array. Then with the help of class activities, I resolved this issue.
-* As the employee has foreign key relation with role and role with department, deleting role and department not possible if it mapped with employee. It took time to figure out why the deletion is not occuring and some work around for the same.
+* As the employee has foreign key relation with role and role with department, deleting role and department not possible if it mapped with employee. It took time to figure out why the deletion is not occuring and did some work around for the same.
 
 ### Future Scope of development
 
@@ -96,5 +100,19 @@ Now, it displays a message 'There are employees associated with the department. 
 
 
 
-### Screenshots
+### Submission Links
+
+Link To the GitHub Repo : https://github.com/YakiniA/12-MySQL-EmployeeTracker
+
+Link To The Demo Video : [Demo Video](public/assets/Video.gif)
+
+#### References
+
+StackOverflow : [StackOverflow - Failed to open referenced table](https://stackoverflow.com/questions/52377469/failed-to-open-the-referenced-table)<br/>
+StackOverflow : [StackOverflow - Incompatible With Column Type](https://stackoverflow.com/questions/44153618/ora-02267-column-type-incompatible-with-referenced-column-type)<br/>
+SQL : [SQL - Left Join](https://www.sqlservertutorial.net/sql-server-basics/sql-server-left-join/)<br/>
+StackOverflow : [To access to exact value of array after 'Split'](https://stackoverflow.com/questions/7390091/can-i-access-directly-to-the-second-value-of-an-array-after-split)<br/>
+StackOverflow : [Foreign Key Constraints on Update and delete](https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete)<br/>
+SQL Bolt : [SQL Bolt](https://sqlbolt.com/)
+
 
