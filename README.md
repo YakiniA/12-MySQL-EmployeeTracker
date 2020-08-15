@@ -22,6 +22,8 @@ The application will be invoked with the following command:
 npm start
 ```
 
+First need to set the database by using the queries in schema.sql, seed.sql
+
 ### NPM Module
 
 * Inquirer      - Used the inquirer.prompt method to prompt the user with questions regarding the employees. Validate attribute in the inquirer module is used in order to ensure each questions was answered correctly.
@@ -98,21 +100,19 @@ Now, it displays a message 'There are employees associated with the department. 
 
 ### Preview
 
-
+![RecordedVideo](Assets/EmployeeTrackerVideo.gif)
 
 ### Submission Links
 
 Link To the GitHub Repo : https://github.com/YakiniA/12-MySQL-EmployeeTracker
 
-Link To The Demo Video : [Demo Video](public/assets/Video.gif)
+Link To The Demo Video : [Demo Video](https://drive.google.com/file/d/13vJ442TueGIxwaVV9Rcx_zOrYF8vfyzZ/view?usp=sharing)
 
 #### References
 
 StackOverflow : [StackOverflow - Failed to open referenced table](https://stackoverflow.com/questions/52377469/failed-to-open-the-referenced-table)<br/>
 StackOverflow : [StackOverflow - Incompatible With Column Type](https://stackoverflow.com/questions/44153618/ora-02267-column-type-incompatible-with-referenced-column-type)<br/>
-SQL : [SQL - Left Join](https://www.sqlservertutorial.net/sql-server-basics/sql-server-left-join/)<br/>
 StackOverflow : [To access to exact value of array after 'Split'](https://stackoverflow.com/questions/7390091/can-i-access-directly-to-the-second-value-of-an-array-after-split)<br/>
 StackOverflow : [Foreign Key Constraints on Update and delete](https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete)<br/>
 SQL Bolt : [SQL Bolt](https://sqlbolt.com/)
-
-
+SQL : [SQL - Left Join](https://www.sqlservertutorial.net/sql-server-basics/sql-server-left-join/)<br/>

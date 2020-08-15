@@ -625,8 +625,7 @@ async function updateEmployeeManager() {
 
     ]).then(async function (answer) {
 
-
-      if (answer.employee === answer.manager) {
+      if (answer.employee.split(" ", 5)[4] ===  answer.manager.split(" ", 1)[0]) {
         console.log('\n');
         console.log(`===== Employee and manager should not be same. Please select a different manager =====`);
         console.log('\n');
