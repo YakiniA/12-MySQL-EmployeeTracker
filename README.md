@@ -74,3 +74,27 @@ The below functionalities are implemented:
   * Delete departments, roles, and employees
   * View the total utilized budget of a department
 
+### Application
+
+* This application is used for managing the company's employees with the help of node,inquirer and mySql.
+* This application can perform a variety of CRUD operations like Create, Read, Update and Delete on employee,role and department table data depending upon the inputs from the user using inquirer.
+* The validation for the inputs is done on whether the inquirer prompt is being answered correctly or not.
+* Depending on the inputs, mysql query is written and connection is being established to the database by using mysql NPM module.
+* It also prompt the user with recent employee details and role for performing operations like add Employee , add Role, update Employee role, update employee manager etc.,
+
+### Challenges Faced
+
+* The initial challenge in writing the mysql query using JOINTS is resolved with the help of my instructor, TA.
+* Always faced promise issue while trying to implement in async way. First, I tried to split up the queries into separate functions to use in my main function, while doing that it is not waiting for my sql operation to complete resulting in NULL array. Then with the help of class activities, I resolved this issue.
+* As the employee has foreign key relation with role and role with department, deleting role and department not possible if it mapped with employee. It took time to figure out why the deletion is not occuring and some work around for the same.
+
+### Future Scope of development
+
+Now, it displays a message 'There are employees associated with the department. DELETE THEM before trying to delete the department!!!' if there are employees associated to the role/department we want to delete. My future scope of developement is to prompt the user 'Whether they want to delete the employees associated with the role'. If yes, then delete the employees and then the role.
+
+### Preview
+
+
+
+### Screenshots
+

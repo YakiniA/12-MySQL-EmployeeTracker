@@ -14,7 +14,7 @@ connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "webDev@2020",
+  password: "",
   database: "employeeTracker_DB"
 });
 
