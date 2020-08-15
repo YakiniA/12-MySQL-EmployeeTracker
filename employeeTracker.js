@@ -452,7 +452,7 @@ async function removeDepartment(){
         if (err){
           if( err.errno === 1451) {
           console.log('\n');
-          console.log("=====  Because of foreign key constraints you cannot perform delete operation!!!  =====");
+          console.log("=====  There are employees associated with the department. DELETE THEM before trying to delete the department!!!  =====");
           console.log('\n');
           
           return inquirerPrompts();
@@ -504,7 +504,7 @@ async function removeRole(){
         if (err){
           if( err.errno === 1451) {
           console.log('\n');
-          console.log("=====  Because of foreign key constraints you cannot perform delete operation!!!  =====");
+          console.log("=====  There are employees associated with the department. DELETE THEM before trying to delete the role!!!  =====");
           console.log('\n');
           
           return inquirerPrompts();
@@ -690,7 +690,6 @@ async function retrieveAllRoles() {
 async function retrieveRoleBasedOnTitle(role) {
 
   connection.query = util.promisify(connection.query);
-  // return await connection.query("SELECT * from role where role.title = '" + role + "'");
   return await connection.query("SELECT * from role where role.title = ?" , [role]);
 
 }
@@ -701,6 +700,5 @@ async function retrieveEmployeeBasedOnName(name) {
   connection.query = util.promisify(connection.query);
   return await connection.query("SELECT * from employee where employee.first_name LIKE ?" , [name]);
 }
-
 
 inquirerPrompts();
