@@ -1,4 +1,4 @@
-## Unit 12 MySQL Homework: Employee Tracker
+## Unit 12 MySQL : Employee Tracker
 
 This purpose of this assignment is to build a CLI that provides solution for managing a company's employees using node, inquirer, and MySQL. 
 
