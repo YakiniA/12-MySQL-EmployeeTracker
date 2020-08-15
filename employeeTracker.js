@@ -1,7 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 const util = require("util");
-var consoleTable = require("console.table")
+var consoleTable = require("console.table");
 
 let connection;
 connection = mysql.createConnection({
@@ -39,13 +39,15 @@ function inquirerPrompts() {
         "View All Employees by Department",
         "View All Employees by Manager",
         "Add Employee",
-        "Remove Employee",
         "Add Department",
-        "Remove Department",
         "Add Role",
-        "Remove Role",
         "Update Employee Role",
-        "Update Employee Manager"
+        "Update Employee Manager",
+        "Remove Employee",
+        "Remove Department",
+        "Remove Role",
+        "Exit"
+        
       ]
     }]).then(teamChoice => {
 
@@ -73,34 +75,16 @@ function inquirerPrompts() {
           addEmployee();
 
           break;
-
-        case `Remove Employee`:
-
-          removeEmployee();
-
-          break;
-
+        
         case `Add Department`:
 
           addDepartment();
 
           break;
 
-        case `Remove Department`:
-
-          removeDepartment();
-
-          break;
-
         case `Add Role`:
 
           addRole();
-
-          break;
-  
-        case `Remove Role`:
-
-          removeRole();
 
           break;
 
@@ -116,9 +100,27 @@ function inquirerPrompts() {
 
           break;
 
-        default:
+        case `Remove Employee`:
 
-          console.log("~~ We are here to hep you with our Employee Tracker..Thank You !!! ~~");
+          removeEmployee();
+
+          break;
+
+        case `Remove Department`:
+
+          removeDepartment();
+
+          break;
+
+        case `Remove Role`:
+
+          removeRole();
+
+          break;
+
+        case `Exit`:
+
+          console.log("~~ ..Thank You.. !!! ~~");
           break;
 
       }
@@ -396,9 +398,7 @@ async function removeEmployee() {
 }
 
 async function removeDepartment(){
-  console.log('\n');
-  console.log("=== Caution : The employee's will be unassigned and they won't have department if you remove ===");
-  console.log('\n');
+ 
   var choiceArray = [];
 
   var department = await retrieveAllDepartment();
@@ -426,15 +426,80 @@ async function removeDepartment(){
       {
         id : id
       },
-      function (err) {
-        if (err) throw err;
-        console.log('\n');
-        console.log("======  Department got removed successfully!  ======");
-        console.log('\n');
-        inquirerPrompts();
-      }
+    
+      function (err, res) {
+     
+        if (err){
+          if( err.errno === 1451) {
+          console.log('\n');
+          console.log("=====  Because of foreign key constraints you cannot perform delete operation!!!  =====");
+          console.log('\n');
+          
+          return inquirerPrompts();
+          } else throw err;
+        } else if(res.affectedRows === 1) {
+          
+          console.log('\n');
+          console.log("======  Department got removed successfully!  ======");
+          console.log('\n');
+          return inquirerPrompts();
+        }
+      } 
       );
+
   });
+}
+
+async function removeRole(){
+  
+  var choiceArray = [];
+
+  var roles = await retrieveAllRoles();
+
+  for (var i = 0; i < roles.length; i++) {
+    choiceArray.push("ID: " + roles[i].id + " Role Name: " + roles[i].title);
+
+  }
+
+  inquirer
+    .prompt([
+
+      {
+        name: "employee",
+        type: "rawlist",
+        message: "Which role you want to remove?",
+        choices: choiceArray
+      }
+    ]).then(async function (answer) {
+
+      var id = answer.employee.split(" ", 2)[1];
+      console.log(JSON.parse(id));
+
+      connection.query("DELETE from role WHERE ?",
+      {
+        id : id
+      },
+      function (err, res) {
+     
+        if (err){
+          if( err.errno === 1451) {
+          console.log('\n');
+          console.log("=====  Because of foreign key constraints you cannot perform delete operation!!!  =====");
+          console.log('\n');
+          
+          return inquirerPrompts();
+          } else throw err;
+        } else if(res.affectedRows === 1) {
+          
+          console.log('\n');
+          console.log("======  Role got removed successfully!  ======");
+          console.log('\n');
+          return inquirerPrompts();
+        }
+      } 
+      
+  );
+});
 }
 
 async function updateEmployeeRole() {
