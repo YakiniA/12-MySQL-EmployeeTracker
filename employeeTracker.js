@@ -23,21 +23,21 @@ connection = mysql.createConnection({
 function inquirerPrompts() {
 
   console.log("==================================================");
-  console.log("==================================================");
   console.log("~~~~~~~~~~~~~~~  EMPLOYEE TRACKER  ~~~~~~~~~~~~~~~");
   console.log("==================================================");
-  console.log("==================================================");
+
   console.log('\n');
  
   inquirer.prompt([
     {
-      type: "list",
+      type: "rawlist",
       message: "Which you like to do?",
       name: "choice",
       choices: [
         "View All Employees",
         "View All Employees by Department",
         "View All Employees by Manager",
+        "View Department Budget",
         "Add Employee",
         "Add Department",
         "Add Role",
@@ -67,6 +67,12 @@ function inquirerPrompts() {
         case `View All Employees by Manager`:
 
           viewEmployeesByManager();
+
+          break;
+
+        case `View Department Budget`:
+
+          viewDepartmentBudget();
 
           break;
 
@@ -121,6 +127,7 @@ function inquirerPrompts() {
         case `Exit`:
 
           console.log("~~ ..Thank You.. !!! ~~");
+          connection.end();
           break;
 
       }
@@ -176,6 +183,19 @@ function viewEmployeesByManager(){
         if (err) throw err;
         console.log('\n');
         console.log('===========  View Employees By Manager  ==========');
+        console.log('\n');
+        console.table(res);
+        inquirerPrompts();
+    });
+}
+
+function viewDepartmentBudget(){
+  const query = `SELECT d.id ,  d.name as departmentName, SUM(r.salary) as utilizedBudget 
+                 FROM employee e LEFT JOIN role r on e.role_id = r.id LEFT JOIN department d on r.department_id = d.id GROUP BY d.id, d.name`;
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('===========  View Department Budget  ==========');
         console.log('\n');
         console.table(res);
         inquirerPrompts();
